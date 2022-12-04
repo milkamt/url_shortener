@@ -1,19 +1,21 @@
 package com.url_shortener.service;
 
+import com.url_shortener.dto.UrlDto;
 import com.url_shortener.model.Url;
 import com.url_shortener.repository.UrlRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UrlServiceImpl implements UrlService{
     private final UrlRepository urlRepository;
 
-    @Override
-    public String generateSecretCode() {
+    private String generateSecretCode() {
         Random random = new Random();
         int number = random.nextInt(9999);
         return String.format("%04d", number);
@@ -28,12 +30,16 @@ public class UrlServiceImpl implements UrlService{
     public String getUrl(String alias) {
         var url = urlRepository.findUrlByAlias(alias);
 
-        return url.isPresent() ? url.get().getUrl() : "Alias not found";
+        return url.map(Url::getUrl).orElse(null);
     }
 
     @Override
-    public void saveUrl(Url url) {
-        urlRepository.save(url);
+    public void saveUrl(UrlDto url) {
+        urlRepository.save(
+                new Url(
+                        url.getUrl(),
+                        url.getAlias(),
+                        generateSecretCode()));
     }
 
     @Override
@@ -56,5 +62,13 @@ public class UrlServiceImpl implements UrlService{
         url.ifPresent(val -> val.setHitCount(
                 val.getHitCount() == null ? 1L : val.getHitCount() + 1L));
         url.ifPresent(urlRepository::save);
+    }
+
+    @Override
+    public List<String> getAllAliases() {
+        List<Url> urls = urlRepository.findAll();
+        return urls.stream()
+                .map(Url::getAlias)
+                .collect(Collectors.toList());
     }
 }

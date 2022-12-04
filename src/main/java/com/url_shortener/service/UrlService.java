@@ -1,12 +1,13 @@
 package com.url_shortener.service;
 
-import com.url_shortener.model.Url;
+import com.url_shortener.dto.UrlDto;
+
+import java.util.List;
 
 public interface UrlService {
-    String generateSecretCode();
     Boolean aliasAlreadyExists(String alias);
     String getUrl(String alias);
-    void saveUrl(Url url);
-    String deleteBySecretCode(Long id, String secretCode);
+    void saveUrl(UrlDto url);
     void incrementHitCount(String alias);
+    List<String> getAllAliases();
 }

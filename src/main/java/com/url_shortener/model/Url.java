@@ -19,7 +19,7 @@ public class Url {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @URL
+    @URL(message = "{Url.Format}")
     private String url;
     @Size(max = 30)
     private String alias;

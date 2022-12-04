@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>Url Shortener</title>
+</head>
+<body>
+    <div>
+        <h1>Url Shortener Service</h1>
+    </div>
+    <div>
+        <p style="color: red" th:if="${error}" th:text="${error}"></p>
+        <p style="color: green" th:if="${success}" th:text="${success}"></p>
+    </div>
+    <form th:action="@{/}" method="post" th:object="${url}">
+        <label for="url">URL</label>
+        <br>
+        <input type="text" th:field="*{url}" id="url">
+        <p th:if="${#fields.hasErrors('url')}">Invalid URL</p>
+        <br>
+        <label for="alias">Alias</label>
+        <br>
+        <input type="text" th:field="*{alias}" id="alias">
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+    <ul>
+        <li th:each="alias:${aliases}">
+            <a th:href="@{/{alias}(alias=${alias})}"
+               th:text="${alias}">
+            </a>
+        </li>
+
+    </ul>
+</body>
+</html>
